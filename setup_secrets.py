@@ -38,3 +38,7 @@ w.secrets.put_acl(
     principal="users",
     permission=workspace.AclPermission.READ,
 )
+
+
+nAa7EKjpLD7QdrPBkNaZ4yHAybD1nIVn
+

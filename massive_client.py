@@ -9,6 +9,7 @@ files, or app.yaml.
 import base64
 import os
 from typing import Any
+import socket
 
 import requests
 from databricks.sdk import WorkspaceClient
@@ -17,7 +18,8 @@ _w = WorkspaceClient()
 
 _SCOPE = os.environ.get("MASSIVE_SECRET_SCOPE", "massive")
 _KEY = os.environ.get("MASSIVE_SECRET_KEY", "api-key")
-_BASE_URL = os.environ.get("MASSIVE_API_BASE_URL", "https://api.massive.com")
+_BASE_URL = os.environ.get("MASSIVE_API_BASE_URL", "https://api.polygon.io")
+                           #"https://api.massive.com")
 
 _DEFAULT_TIMEOUT = 30
 
