@@ -19,7 +19,7 @@ from sqlalchemy import create_engine
 _w = WorkspaceClient()
 
 _SCOPE = os.environ.get("LAKEBASE_SECRET_SCOPE", "database")
-_KEY = os.environ.get("LAKEBASE_SECRET_KEY", "lakebase-url")
+_KEY = os.environ.get("LAKEBASE_SECRET_KEY", "lakebase-homework-url")
 
 
 def _lakebase_url() -> str:
@@ -58,3 +58,13 @@ def run_write(sql: str, params: tuple | dict | None = None) -> int:
             cur.execute(sql, params)
             conn.commit()
             return cur.rowcount
+
+
+def run_write_returning(sql: str, params: tuple | dict | None = None) -> dict | None:
+    """Run an INSERT/UPDATE with RETURNING clause, return the first row as dict."""
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, params)
+            result = cur.fetchone()
+            conn.commit()
+            return dict(result) if result else None

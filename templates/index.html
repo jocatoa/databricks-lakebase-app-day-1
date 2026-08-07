@@ -2,97 +2,899 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Massive Stock Watchlist</title>
+  <title>Support Ticket System</title>
   <style>
-    body { font-family: -apple-system, Arial, sans-serif; max-width: 560px; margin: 60px auto; color: #222; }
-    h1 { font-size: 20px; }
-    label { display: block; margin-top: 16px; font-weight: 600; }
-    input[type="text"] { width: 100%; padding: 8px; margin-top: 6px; box-sizing: border-box; }
-    button { margin-top: 16px; padding: 8px 16px; cursor: pointer; }
-    #result { margin-top: 20px; white-space: pre-wrap; background: #f6f6f6; padding: 12px; border-radius: 6px; min-height: 20px; }
-    .hint { color: #777; font-size: 13px; margin-top: 4px; }
-    table { width: 100%; margin-top: 24px; border-collapse: collapse; }
-    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-    th { font-size: 13px; color: #555; text-transform: uppercase; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 24px; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #1a202c;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    h1 { 
+      font-size: 32px; 
+      font-weight: 700; 
+      margin-bottom: 8px; 
+      color: #1a202c;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h2 { 
+      font-size: 22px; 
+      font-weight: 600; 
+      margin-top: 40px; 
+      margin-bottom: 20px; 
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h2::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    .subtitle { 
+      color: #718096; 
+      font-size: 15px; 
+      margin-bottom: 32px; 
+      line-height: 1.6;
+    }
+    .form-section {
+      background: #f7fafc;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+    label { 
+      display: block; 
+      margin-top: 16px; 
+      margin-bottom: 6px;
+      font-weight: 600; 
+      font-size: 14px; 
+      color: #2d3748;
+    }
+    label:first-child { margin-top: 0; }
+    input[type="text"], select, textarea { 
+      width: 100%; 
+      padding: 12px 16px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 8px; 
+      font-family: inherit; 
+      font-size: 14px;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus { 
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    input[type="text"].error, select.error, textarea.error {
+      border-color: #fc8181;
+      background: #fff5f5;
+    }
+    .input-error {
+      color: #e53e3e;
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+    .input-error.show { display: block; }
+    textarea { 
+      min-height: 100px; 
+      resize: vertical; 
+      line-height: 1.5;
+    }
+    button { 
+      padding: 12px 24px; 
+      margin-top: 16px; 
+      cursor: pointer; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 600; 
+      font-size: 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-primary { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+    }
+    .btn-primary:hover { 
+      background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    }
+    .btn-secondary { 
+      background: #718096; 
+      color: white; 
+    }
+    .btn-secondary:hover { 
+      background: #4a5568; 
+    }
+    .btn-danger { 
+      background: #f56565; 
+      color: white; 
+      padding: 8px 16px; 
+      font-size: 13px; 
+    }
+    .btn-danger:hover { 
+      background: #e53e3e; 
+    }
+    .btn-small { 
+      padding: 8px 16px; 
+      font-size: 13px; 
+      margin-top: 0;
+    }
+    #message { 
+      margin-top: 20px; 
+      padding: 16px 20px; 
+      border-radius: 10px; 
+      display: none;
+      font-weight: 500;
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #message.success { 
+      background: #c6f6d5; 
+      color: #22543d; 
+      border: 2px solid #9ae6b4; 
+    }
+    #message.error { 
+      background: #fed7d7; 
+      color: #742a2a; 
+      border: 2px solid #fc8181; 
+    }
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-bar label {
+      margin: 0;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .filter-bar select {
+      width: auto;
+      min-width: 200px;
+    }
+    .ticket-count {
+      margin-left: auto;
+      color: #718096;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      background: white; 
+    }
+    th, td { 
+      text-align: left; 
+      padding: 16px; 
+      border-bottom: 1px solid #e2e8f0; 
+    }
+    th { 
+      font-size: 12px; 
+      color: #4a5568; 
+      text-transform: uppercase; 
+      font-weight: 700; 
+      background: #f7fafc;
+      letter-spacing: 0.5px;
+    }
+    td { 
+      font-size: 14px; 
+      color: #2d3748;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr {
+      transition: background-color 0.2s ease;
+    }
+    tbody tr:hover { 
+      background: #f7fafc; 
+    }
+    .status-badge { 
+      display: inline-block; 
+      padding: 6px 12px; 
+      border-radius: 16px; 
+      font-size: 12px; 
+      font-weight: 700; 
+      text-transform: capitalize;
+      letter-spacing: 0.3px;
+    }
+    .status-open { 
+      background: #bee3f8; 
+      color: #2c5282; 
+    }
+    .status-closed { 
+      background: #e9d8fd; 
+      color: #553c9a; 
+    }
+    .status-in_progress { 
+      background: #feebc8; 
+      color: #c05621; 
+    }
+    .priority-badge {
+      display: inline-block; 
+      padding: 6px 12px; 
+      border-radius: 16px; 
+      font-size: 12px; 
+      font-weight: 700; 
+      text-transform: capitalize;
+      letter-spacing: 0.3px;
+    }
+    .priority-high { 
+      background: #fed7d7; 
+      color: #742a2a; 
+    }
+    .priority-medium { 
+      background: #feebc8; 
+      color: #c05621; 
+    }
+    .priority-low { 
+      background: #c6f6d5; 
+      color: #22543d; 
+    }
+    .actions { 
+      white-space: nowrap; 
+      display: flex;
+      gap: 8px;
+    }
+    .actions button { 
+      margin: 0; 
+    }
+    
+    /* Modal styles */
+    .modal { 
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0; 
+      top: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content { 
+      background: white; 
+      margin: 3% auto; 
+      padding: 32px; 
+      border-radius: 16px; 
+      max-width: 700px; 
+      max-height: 85vh; 
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 24px; 
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .modal-header h2::before { display: none; }
+    .close { 
+      color: #a0aec0; 
+      font-size: 28px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      line-height: 20px;
+      transition: color 0.2s ease;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .close:hover { 
+      color: #2d3748;
+      background: #f7fafc;
+    }
+    .message-list { 
+      max-height: 400px; 
+      overflow-y: auto; 
+      margin-top: 20px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 12px;
+      background: #f7fafc;
+    }
+    .message-item { 
+      padding: 16px; 
+      background: white;
+      margin: 8px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .message-author { 
+      font-weight: 600; 
+      color: #667eea; 
+      font-size: 14px; 
+    }
+    .message-time { 
+      color: #a0aec0; 
+      font-size: 12px; 
+      margin-left: 8px; 
+    }
+    .message-text { 
+      margin-top: 8px; 
+      line-height: 1.6; 
+      white-space: pre-wrap; 
+      color: #2d3748;
+    }
+    .no-messages { 
+      text-align: center; 
+      padding: 48px 20px; 
+      color: #a0aec0; 
+      font-style: italic; 
+    }
   </style>
 </head>
 <body>
-  <h1>Stock Watchlist</h1>
-  <p class="hint">Enter a single ticker symbol. This sends exactly ONE call to the Massive API to fetch the latest price, then adds it to your watchlist.</p>
+  <div class="container">
+    <h1>Support Ticket System</h1>
+    <p class="subtitle">Create and manage support tickets with Lakebase Postgres</p>
 
-  <form id="stock-form">
-    <label for="symbol">Ticker symbol</label>
-    <input type="text" id="symbol" name="symbol" placeholder="AAPL" required>
-    <button type="submit">Add to watchlist</button>
-  </form>
+    <h2>Create New Ticket</h2>
+    <div class="form-section">
+      <form id="ticket-form">
+        <label for="title">Ticket Title *</label>
+        <input type="text" id="title" name="title" placeholder="Brief description of the issue" required minlength="3" maxlength="200">
+        <div class="input-error" id="title-error">Title must be between 3 and 200 characters</div>
+        
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority">
+          <option value="low" selected>Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        
+        <label for="status">Initial Status</label>
+        <select id="status" name="status">
+          <option value="open" selected>Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="closed">Closed</option>
+        </select>
+        
+        <button type="submit" class="btn-primary">Create Ticket</button>
+      </form>
+    </div>
 
-  <div id="result"></div>
+    <div id="message"></div>
 
-  <table id="watchlist-table">
-    <thead>
-      <tr>
-        <th>Symbol</th>
-        <th>Email</th>
-        <th>Latest price</th>
-        <th>Updated</th>
-      </tr>
-    </thead>
-    <tbody id="watchlist-body"></tbody>
-  </table>
+    <h2>All Support Tickets</h2>
+    <div class="filter-bar">
+      <label for="filter-priority">Priority:</label>
+      <select id="filter-priority">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      
+      <label for="filter-status">Status:</label>
+      <select id="filter-status">
+        <option value="all">All</option>
+        <option value="open">Open</option>
+        <option value="in_progress">In Progress</option>
+        <option value="closed">Closed</option>
+      </select>
+      <span class="ticket-count" id="ticket-count">0 tickets</span>
+    </div>
+    <div class="table-container">
+      <table id="tickets-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tickets-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Messages Modal -->
+  <div id="messages-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Ticket Messages</h2>
+        <span class="close" onclick="closeMessagesModal()">&times;</span>
+      </div>
+      <div class="message-list" id="message-list"></div>
+      
+      <h3 style="margin-top: 24px; margin-bottom: 16px; font-size: 16px; color: #2d3748;">Add Message</h3>
+      <form id="message-form">
+        <textarea id="message-text" placeholder="Type your message here..." required minlength="1" maxlength="1000"></textarea>
+        <div class="input-error" id="message-error">Message must be between 1 and 1000 characters</div>
+        <button type="submit" class="btn-primary">Send Message</button>
+        <button type="button" class="btn-secondary" onclick="closeMessagesModal()">Close</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Ticket Modal -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Ticket</h2>
+        <span class="close" onclick="closeEditModal()">&times;</span>
+      </div>
+      <form id="edit-form">
+        <label for="edit-title">Ticket Title *</label>
+        <input type="text" id="edit-title" name="title" required minlength="3" maxlength="200">
+        <div class="input-error" id="edit-title-error">Title must be between 3 and 200 characters</div>
+        
+        <label for="edit-priority">Priority</label>
+        <select id="edit-priority" name="priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        
+        <label for="edit-status">Status</label>
+        <select id="edit-status" name="status">
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="closed">Closed</option>
+        </select>
+        
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
 
   <script>
-    const form = document.getElementById("stock-form");
-    const resultEl = document.getElementById("result");
-    const watchlistBody = document.getElementById("watchlist-body");
+    const ticketForm = document.getElementById("ticket-form");
+    const messageEl = document.getElementById("message");
+    const ticketsBody = document.getElementById("tickets-body");
+    const messagesModal = document.getElementById("messages-modal");
+    const messageList = document.getElementById("message-list");
+    const messageForm = document.getElementById("message-form");
+    const modalTitle = document.getElementById("modal-title");
+    const editModal = document.getElementById("edit-modal");
+    const editForm = document.getElementById("edit-form");
+    const filterPriority = document.getElementById("filter-priority");
+    const filterStatus = document.getElementById("filter-status");
+    const ticketCount = document.getElementById("ticket-count");
+    
+    let currentTicketId = null;
+    let currentEditTicket = null;
+    let allTickets = [];
 
-    async function loadWatchlist() {
+    function showMessage(text, isError = false) {
+      messageEl.textContent = text;
+      messageEl.className = isError ? "error" : "success";
+      messageEl.style.display = "block";
+      setTimeout(() => { messageEl.style.display = "none"; }, 5000);
+    }
+
+    function validateInput(input, errorElement) {
+      const value = input.value.trim();
+      const minLength = input.getAttribute('minlength');
+      const maxLength = input.getAttribute('maxlength');
+      
+      if (value.length === 0 && input.hasAttribute('required')) {
+        input.classList.add('error');
+        errorElement.classList.add('show');
+        errorElement.textContent = 'This field is required';
+        return false;
+      }
+      
+      if (minLength && value.length < parseInt(minLength)) {
+        input.classList.add('error');
+        errorElement.classList.add('show');
+        return false;
+      }
+      
+      if (maxLength && value.length > parseInt(maxLength)) {
+        input.classList.add('error');
+        errorElement.classList.add('show');
+        return false;
+      }
+      
+      input.classList.remove('error');
+      errorElement.classList.remove('show');
+      return true;
+    }
+
+    async function loadTickets() {
       try {
-        const resp = await fetch("/watchlist");
+        const resp = await fetch("/tickets");
         const data = await resp.json();
         if (!resp.ok) {
-          resultEl.textContent = "Error loading watchlist: " + (data.error || resp.statusText);
+          const errorMsg = data.error || resp.statusText || 'Unknown error occurred';
+          showMessage("Failed to load tickets. " + errorMsg + ". Please refresh the page.", true);
           return;
         }
-        watchlistBody.innerHTML = "";
-        data.forEach((row) => {
-          const tr = document.createElement("tr");
-          const price = row.latest_price !== null && row.latest_price !== undefined
-            ? Number(row.latest_price).toFixed(2)
-            : "-";
-          const updated = row.updated_at ? new Date(row.updated_at).toLocaleString() : "-";
-          tr.innerHTML = `<td>${row.symbol}</td><td>${row.email || "-"}</td><td>${price}</td><td>${updated}</td>`;
-          watchlistBody.appendChild(tr);
-        });
+        
+        allTickets = data;
+        filterAndDisplayTickets();
       } catch (err) {
-        resultEl.textContent = "Failed to load watchlist: " + err;
+        showMessage("Network error: Unable to connect to the server. Please check your connection and try again.", true);
+        console.error(err);
       }
     }
 
-    form.addEventListener("submit", async (e) => {
+    function filterAndDisplayTickets() {
+      const priorityFilter = filterPriority.value;
+      const statusFilter = filterStatus.value;
+      
+      let filtered = allTickets;
+      
+      if (priorityFilter !== 'all') {
+        filtered = filtered.filter(t => t.priority === priorityFilter);
+      }
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(t => t.status === statusFilter);
+      }
+      
+      ticketsBody.innerHTML = "";
+      
+      ticketCount.textContent = `${filtered.length} ticket${filtered.length !== 1 ? 's' : ''}`;
+      
+      if (filtered.length === 0) {
+        let message = 'No tickets found.';
+        if (priorityFilter === 'all' && statusFilter === 'all') {
+          message = 'No tickets yet. Create one above!';
+        } else {
+          const parts = [];
+          if (priorityFilter !== 'all') parts.push(priorityFilter + ' priority');
+          if (statusFilter !== 'all') parts.push(statusFilter.replace('_', ' '));
+          message = `No ${parts.join(' ')} tickets found.`;
+        }
+        ticketsBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: #a0aec0; font-style: italic;">${message}</td></tr>`;
+        return;
+      }
+      
+      filtered.forEach((ticket) => {
+        const tr = document.createElement("tr");
+        const createdAt = ticket.created_at ? new Date(ticket.created_at).toLocaleString() : "-";
+        const priorityClass = `priority-${ticket.priority.toLowerCase()}`;
+        const statusClass = `status-${ticket.status.toLowerCase()}`;
+        
+        tr.innerHTML = `
+          <td><strong>#${ticket.ticket_id}</strong></td>
+          <td>${escapeHtml(ticket.title)}</td>
+          <td><span class="priority-badge ${priorityClass}">${escapeHtml(ticket.priority)}</span></td>
+          <td><span class="status-badge ${statusClass}">${escapeHtml(ticket.status.replace('_', ' '))}</span></td>
+          <td>${escapeHtml(ticket.created_by)}</td>
+          <td>${createdAt}</td>
+          <td class="actions">
+            <button class="btn-small btn-primary" onclick='editTicket(${JSON.stringify(ticket)})'>Edit</button>
+            <button class="btn-small btn-secondary" onclick="viewMessages(${ticket.ticket_id}, '${escapeHtml(ticket.title)}')">Messages</button>
+            <button class="btn-small btn-danger" onclick="deleteTicket(${ticket.ticket_id})">Delete</button>
+          </td>
+        `;
+        ticketsBody.appendChild(tr);
+      });
+    }
+
+    filterPriority.addEventListener('change', filterAndDisplayTickets);
+    filterStatus.addEventListener('change', filterAndDisplayTickets);
+
+    // Add real-time validation
+    document.getElementById("title").addEventListener('input', function() {
+      validateInput(this, document.getElementById('title-error'));
+    });
+
+    ticketForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const symbol = document.getElementById("symbol").value;
-      resultEl.textContent = "Adding to watchlist...";
+      
+      const titleInput = document.getElementById("title");
+      const titleError = document.getElementById("title-error");
+      
+      if (!validateInput(titleInput, titleError)) {
+        showMessage("Please fix the errors before submitting.", true);
+        return;
+      }
+      
+      const title = titleInput.value.trim();
+      const priority = document.getElementById("priority").value;
+      const status = document.getElementById("status").value;
+      
+      const submitBtn = e.submitter;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating...";
 
       try {
-        const resp = await fetch("/watchlist", {
+        const resp = await fetch("/tickets", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ symbol }),
+          body: JSON.stringify({ title, priority, status }),
         });
         const data = await resp.json();
+        
         if (!resp.ok) {
-          resultEl.textContent = "Error: " + (data.error || resp.statusText);
+          const errorMsg = data.error || resp.statusText || 'Unknown error';
+          showMessage("Failed to create ticket: " + errorMsg, true);
           return;
         }
-        resultEl.textContent = "Added " + data.symbol + " at price " + data.latest_price;
-        document.getElementById("symbol").value = "";
-        loadWatchlist();
+        
+        showMessage(`✓ Ticket #${data.ticket_id} "${title}" (${priority} priority) created successfully!`);
+        ticketForm.reset();
+        titleInput.classList.remove('error');
+        titleError.classList.remove('show');
+        loadTickets();
       } catch (err) {
-        resultEl.textContent = "Request failed: " + err;
+        showMessage("Network error: Unable to create ticket. Please try again.", true);
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create Ticket";
       }
     });
 
-    loadWatchlist();
+    function editTicket(ticket) {
+      currentEditTicket = ticket;
+      const editTitleInput = document.getElementById("edit-title");
+      editTitleInput.value = ticket.title;
+      editTitleInput.classList.remove('error');
+      document.getElementById('edit-title-error').classList.remove('show');
+      document.getElementById("edit-priority").value = ticket.priority || 'low';
+      document.getElementById("edit-status").value = ticket.status;
+      editModal.style.display = "block";
+    }
+
+    document.getElementById("edit-title").addEventListener('input', function() {
+      validateInput(this, document.getElementById('edit-title-error'));
+    });
+
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentEditTicket) return;
+      
+      const titleInput = document.getElementById("edit-title");
+      const titleError = document.getElementById("edit-title-error");
+      
+      if (!validateInput(titleInput, titleError)) {
+        showMessage("Please fix the errors before saving.", true);
+        return;
+      }
+      
+      const title = titleInput.value.trim();
+      const priority = document.getElementById("edit-priority").value;
+      const status = document.getElementById("edit-status").value;
+      
+      const submitBtn = e.submitter;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving...";
+
+      try {
+        const resp = await fetch(`/tickets/${currentEditTicket.ticket_id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, priority, status }),
+        });
+        const data = await resp.json();
+        
+        if (!resp.ok) {
+          const errorMsg = data.error || resp.statusText || 'Unknown error';
+          showMessage("Failed to update ticket: " + errorMsg, true);
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Save Changes";
+          return;
+        }
+        
+        showMessage(`✓ Ticket #${currentEditTicket.ticket_id} updated successfully`);
+        closeEditModal();
+        loadTickets();
+      } catch (err) {
+        showMessage("Network error: Unable to update ticket. Please try again.", true);
+        console.error(err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save Changes";
+      }
+    });
+
+    async function deleteTicket(ticketId) {
+      if (!confirm(`Are you sure you want to delete Ticket #${ticketId}?\n\nThis action cannot be undone and will also delete all associated messages.`)) {
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/tickets/${ticketId}`, { method: "DELETE" });
+        const data = await resp.json();
+        
+        if (!resp.ok) {
+          const errorMsg = data.error || resp.statusText || 'Unknown error';
+          showMessage("Failed to delete ticket: " + errorMsg, true);
+          return;
+        }
+        
+        showMessage(`✓ Ticket #${ticketId} deleted successfully`);
+        loadTickets();
+      } catch (err) {
+        showMessage("Network error: Unable to delete ticket. Please try again.", true);
+        console.error(err);
+      }
+    }
+
+    async function viewMessages(ticketId, ticketTitle) {
+      currentTicketId = ticketId;
+      modalTitle.textContent = `Messages for Ticket #${ticketId}: ${ticketTitle}`;
+      messagesModal.style.display = "block";
+      await loadMessages();
+    }
+
+    async function loadMessages() {
+      if (!currentTicketId) return;
+      
+      messageList.innerHTML = '<div class="no-messages">Loading messages...</div>';
+      
+      try {
+        const resp = await fetch(`/tickets/${currentTicketId}/messages`);
+        const data = await resp.json();
+        
+        if (!resp.ok) {
+          const errorMsg = data.error || resp.statusText || 'Unknown error';
+          messageList.innerHTML = `<div class="no-messages" style="color: #e53e3e;">Failed to load messages: ${errorMsg}</div>`;
+          return;
+        }
+        
+        if (data.length === 0) {
+          messageList.innerHTML = '<div class="no-messages">No messages yet. Be the first to comment!</div>';
+          return;
+        }
+        
+        messageList.innerHTML = "";
+        data.forEach((msg) => {
+          const div = document.createElement("div");
+          div.className = "message-item";
+          const time = msg.created_at ? new Date(msg.created_at).toLocaleString() : "";
+          div.innerHTML = `
+            <div>
+              <span class="message-author">${escapeHtml(msg.author)}</span>
+              <span class="message-time">${time}</span>
+            </div>
+            <div class="message-text">${escapeHtml(msg.message_text)}</div>
+          `;
+          messageList.appendChild(div);
+        });
+        
+        messageList.scrollTop = messageList.scrollHeight;
+      } catch (err) {
+        messageList.innerHTML = `<div class="no-messages" style="color: #e53e3e;">Network error: Unable to load messages. Please try again.</div>`;
+        console.error(err);
+      }
+    }
+
+    document.getElementById("message-text").addEventListener('input', function() {
+      validateInput(this, document.getElementById('message-error'));
+    });
+
+    messageForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentTicketId) return;
+      
+      const messageInput = document.getElementById("message-text");
+      const messageError = document.getElementById("message-error");
+      
+      if (!validateInput(messageInput, messageError)) {
+        return;
+      }
+      
+      const messageText = messageInput.value.trim();
+      const submitBtn = messageForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      try {
+        const resp = await fetch(`/tickets/${currentTicketId}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message_text: messageText }),
+        });
+        const data = await resp.json();
+        
+        if (!resp.ok) {
+          const errorMsg = data.error || resp.statusText || 'Unknown error';
+          showMessage("Failed to send message: " + errorMsg, true);
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send Message";
+          return;
+        }
+        
+        messageInput.value = "";
+        messageInput.classList.remove('error');
+        messageError.classList.remove('show');
+        await loadMessages();
+      } catch (err) {
+        showMessage("Network error: Unable to send message. Please try again.", true);
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Message";
+      }
+    });
+
+    function closeMessagesModal() {
+      messagesModal.style.display = "none";
+      currentTicketId = null;
+      const messageInput = document.getElementById("message-text");
+      messageInput.value = "";
+      messageInput.classList.remove('error');
+      document.getElementById('message-error').classList.remove('show');
+      const submitBtn = messageForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send Message";
+    }
+
+    function closeEditModal() {
+      editModal.style.display = "none";
+      currentEditTicket = null;
+      editForm.reset();
+      document.getElementById('edit-title').classList.remove('error');
+      document.getElementById('edit-title-error').classList.remove('show');
+      const submitBtn = editForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Save Changes";
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      if (event.target == messagesModal) {
+        closeMessagesModal();
+      }
+      if (event.target == editModal) {
+        closeEditModal();
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Load tickets on page load
+    loadTickets();
   </script>
 </body>
 </html>
