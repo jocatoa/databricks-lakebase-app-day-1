@@ -3,7 +3,7 @@
 A full-featured support ticket management system built as a Databricks App that:
 - Connects to **Lakebase** (Databricks-managed Postgres) using a single `LAKEBASE_URL` secret (a native Postgres role with a static password)
 - Provides a modern web UI for creating, viewing, editing, and managing support tickets
-- Supports ticket prioritization (high/medium/low) and status tracking (open/in progress/closed)
+- Supports ticket prioritization (high/medium/low) and status tracking (open/in progress/resolved)
 - Includes threaded messaging on tickets for team collaboration
 - Leverages Lakebase's foreign key constraints and cascading deletes for data integrity
 
@@ -97,7 +97,7 @@ All of this is done through the Databricks workspace UI:
 
 ### Tickets
 - `GET /tickets` - List all support tickets with priority and status
-- `POST /tickets` - Create a new ticket (JSON body: `{"title": "...", "priority": "high|medium|low", "status": "open|in_progress|closed"}`)
+- `POST /tickets` - Create a new ticket (JSON body: `{"title": "...", "priority": "high|medium|low", "status": "open|in_progress|resolved"}`)
 - `PUT /tickets/<id>` - Update a ticket's title, priority, or status
 - `DELETE /tickets/<id>` - Delete a ticket (cascades to messages)
 
@@ -162,7 +162,7 @@ response times, and message activity over time.
 ## Features
 
 ### Database Schema
-- **tickets** table: ID, title, priority (high/medium/low), status (open/in_progress/closed), created_by, created_at
+- **tickets** table: ID, title, priority (high/medium/low), status (open/in_progress/resolved), created_by, created_at
 - **ticket_messages** table: ID, ticket_id (foreign key with CASCADE delete), message_text, author, created_at
 - Foreign key constraints ensure data integrity
 - Serial primary keys auto-increment

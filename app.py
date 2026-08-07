@@ -6,7 +6,7 @@ A full-featured ticket management system that:
 - Provides a modern web UI with priority filtering and status tracking
 - Reads/writes to Lakebase (Databricks-managed Postgres) via lakebase.py
 - Uses foreign key constraints and cascading deletes for data integrity
-- Tracks ticket priority (high/medium/low) and status (open/in_progress/closed)
+- Tracks ticket priority (high/medium/low) and status (open/in_progress/resolved)
 
 Database schema:
 - tickets: ticket_id (PK), title, priority, status, created_by, created_at
